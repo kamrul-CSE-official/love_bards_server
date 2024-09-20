@@ -13,10 +13,11 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
 
-// app.use('/api/v1', routes);
-app.get("/", (req, res)=>{
-  res.send("Redis Stater Server Is Running...")
-})
+app.use('/api/v1', routes);
+
+app.get('/', (req, res) => {
+  res.send('love-bards Server Is Running...');
+});
 
 app.use(globalExceptionHandler);
 

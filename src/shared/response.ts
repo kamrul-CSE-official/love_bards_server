@@ -1,15 +1,15 @@
 import { Response } from 'express';
 
-interface IResponse {
+interface IResponse<T> {
   success: boolean;
   statusCode: number;
   message?: string;
   meta?: {
-    page: number;
-    limit: number;
-    total: number;
+    page?: number;
+    limit?: number;
+    total?: number;
   };
-  data?: unknown;
+  data?: T | null;
 }
 
 const sendResponse = <T>(
@@ -19,18 +19,18 @@ const sendResponse = <T>(
     success: boolean;
     message?: string;
     meta?: {
-      page: number;
-      limit: number;
-      total: number;
+      page?: number;
+      limit?: number;
+      total?: number;
     };
     data?: T;
   }
 ) => {
-  const response: IResponse = {
+  const response: IResponse<T> = {
     success: data.success,
     statusCode: data.statusCode,
-    message: data.message || 'Success',
-    meta: data.meta,
+    message: data.message || 'Operation successful',
+    meta: data.meta || undefined,
     data: data.data || null
   };
 
