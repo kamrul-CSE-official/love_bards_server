@@ -13,6 +13,5 @@ export interface IProduct extends Document {
   quantity: number;
   images: string[];
   reviews: mongoose.Types.ObjectId[];
-  rating: number;
-  comments: mongoose.Types.ObjectId[];
+  visitors: number;
 }

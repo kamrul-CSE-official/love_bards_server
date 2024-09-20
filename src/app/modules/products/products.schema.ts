@@ -10,9 +10,13 @@ const productSchema = new Schema<IProduct>({
   quantity: { type: Number, required: true },
   images: [{ type: String, required: true }],
   reviews: [{ type: Schema.Types.ObjectId, ref: 'Review' }],
-  rating: { type: Number, default: 0 },
-  comments: [{ type: Schema.Types.ObjectId, ref: 'Comment' }]
+  visitors: { type: Number, default: 1 }
 });
+
+productSchema.methods.incrementVisitors = async function () {
+  this.visitors += 1;
+  await this.save();
+};
 
 const Product = mongoose.model<IProduct>('Product', productSchema);
 export default Product;
