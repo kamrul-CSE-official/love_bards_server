@@ -7,7 +7,7 @@ import logger from './shared/logger';
 async function bootstrap() {
   try {
     // Connect to MongoDB
-    const dbUrl = config.db_url;
+    const dbUrl = config.dbUrl;
     await mongoose
       .connect(dbUrl)
       .then(() => {
