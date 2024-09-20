@@ -9,4 +9,7 @@ export interface IOrder extends Document {
   totalAmount: number;
   status: 'pending' | 'shipped' | 'delivered';
   createdAt: Date;
+  paymentWith: 'Cash on Delivery' | 'Card Payment';
+  mobile: string;
+  address: string;
 }

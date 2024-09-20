@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 import { brands, categories, IProduct } from './products.type';
 
 const productSchema = new Schema<IProduct>({
@@ -13,6 +13,7 @@ const productSchema = new Schema<IProduct>({
   visitors: { type: Number, default: 1 }
 });
 
+// Define the method on the schema
 productSchema.methods.incrementVisitors = async function () {
   this.visitors += 1;
   await this.save();

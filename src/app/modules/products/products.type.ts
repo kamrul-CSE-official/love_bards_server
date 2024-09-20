@@ -1,8 +1,15 @@
 import mongoose, { Document } from 'mongoose';
 
+
 // Enum values for category and brand
-export const categories = ['decorative', 'sports', 'leaf_cups'] as const;
-export const brands = ['Brand A', 'Brand B', 'Brand C'] as const;
+export const categories = ['Kitchen', 'Home Decor', 'Stationery', 'Jewelry'] as const;
+export const brands = [
+  'CraftyHands',
+  'WeaveWonders',
+  'ArtisanClay',
+  'LeatherCraft',
+  'NatureJewels'
+] as const;
 
 export interface IProduct extends Document {
   name: string;
@@ -14,4 +21,5 @@ export interface IProduct extends Document {
   images: string[];
   reviews: mongoose.Types.ObjectId[];
   visitors: number;
+  incrementVisitors(): Promise<void>;
 }

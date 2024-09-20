@@ -1,14 +1,19 @@
 import { Response } from 'express';
 
+// Define Meta interface to reuse in both IResponse and sendResponse
+interface Meta {
+  page?: number;
+  limit?: number;
+  total?: number;
+  totalPages?: number;  // You can include totalPages here
+}
+
+// IResponse interface now uses Meta for the meta field
 interface IResponse<T> {
   success: boolean;
   statusCode: number;
   message?: string;
-  meta?: {
-    page?: number;
-    limit?: number;
-    total?: number;
-  };
+  meta?: Meta;  // Use Meta interface here
   data?: T | null;
 }
 
@@ -18,11 +23,7 @@ const sendResponse = <T>(
     statusCode: number;
     success: boolean;
     message?: string;
-    meta?: {
-      page?: number;
-      limit?: number;
-      total?: number;
-    };
+    meta?: Meta;  // Use Meta interface here
     data?: T;
   }
 ) => {
