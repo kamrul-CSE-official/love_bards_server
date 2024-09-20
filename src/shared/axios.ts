@@ -1,3 +1,4 @@
+/*
 import axios, { AxiosInstance } from 'axios';
 import config from '../config';
 
@@ -34,3 +35,4 @@ const authService = httpService(config.authServiceUrl);
 const CoreService = httpService(config.coreServiceUrl);
 
 export { httpService, authService, CoreService };
+*/

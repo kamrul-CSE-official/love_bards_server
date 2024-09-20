@@ -1,3 +1,4 @@
+/*
 import { createClient } from "redis";
 import logger from "./logger";
 import config from "../config";
@@ -16,3 +17,6 @@ const connect = async(): Promise<void> => {
 export const redisClient = {
     connect
 }
+
+
+*/
