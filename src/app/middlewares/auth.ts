@@ -1,29 +1,46 @@
-import { NextFunction, Response } from 'express';
-import httpStatus from 'http-status';
-import ApiError from '../../errors/apiError';
-import { IAuthUser } from '../../interfaces/auth';
-import { verifyToken } from '../../helpers/jwtHelper';
+import { Request, Response, NextFunction } from 'express';
+import jwt, { VerifyErrors } from 'jsonwebtoken';
+import config from '../../config';
 
-const auth =
-  (...requiredRoles: string[]) =>
-  async (req: any, res: Response, next: NextFunction) => {
-    try {
-      const token = req.headers.authorization?.split(' ')[1]; // Get the token
-      if (!token) throw new ApiError(httpStatus.UNAUTHORIZED, 'Unauthorized');
+export interface AuthenticatedRequest extends Request {
+  user?: { name?: string; email?: string; userId?: string; role?: string };
+}
 
-      const verifiedUser: IAuthUser = verifyToken(token);
-      if (!verifiedUser) throw new ApiError(httpStatus.UNAUTHORIZED, 'Unauthorized');
+const protectRoute = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    // Use headers to get the Authorization header
+    const authHeader = req.headers.authorization;
+    const accessToken = authHeader?.split(' ')[1];
 
-      req.user = verifiedUser;
-
-      if (requiredRoles.length && !requiredRoles.includes(verifiedUser.role)) {
-        throw new ApiError(httpStatus.FORBIDDEN, 'Forbidden');
-      }
-
-      next(); // Pass control to the next middleware if everything is good
-    } catch (error) {
-      next(error); // Handle errors (like token expiration or invalid token)
+    if (!accessToken) {
+      console.log('No access token provided.');
+      res.status(403).json({ message: 'Forbidden access', status: 'fail' });
+      return;
     }
-  };
 
-export default auth;
+    jwt.verify(
+      accessToken,
+      config.jwt.secret as string,
+      (err: VerifyErrors | null, decoded: any) => {
+        if (err) {
+          console.error('JWT verification error: ', err.message);
+          res.status(403).json({ message: 'Forbidden access', status: 'fail' });
+          return;
+        }
+
+        // Attach the decoded token (user) to the request
+        req.user = decoded;
+        next();
+      }
+    );
+  } catch (error) {
+    console.error('ProtectRoute error: ', error);
+    res.status(500).json({ status: 'fail', message: 'Internal Server Error' });
+  }
+};
+
+export default protectRoute;

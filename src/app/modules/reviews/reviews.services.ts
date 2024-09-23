@@ -16,8 +16,7 @@ class ReviewService {
     const reviews = await Review.find({ product: productId })
       .skip(skip)
       .limit(limit)
-      .populate('user', 'name email')
-      .populate('product');
+      .populate('user', 'name email');
 
     return { reviews, total };
   }

@@ -1,19 +1,19 @@
 import express from 'express';
 import reviewsControllers from './reviews.controllers';
-import auth from '../../middlewares/auth';
+import protectRoute from '../../middlewares/auth';
 
 const router = express.Router();
 
 // Create a new review
-router.post('/', auth(), reviewsControllers.createReview);
+router.post('/', protectRoute, reviewsControllers.createReview);
 
 // Get reviews for a product (with pagination)
 router.get('/product/:productId', reviewsControllers.getProductReviews);
 
 // Update a review by ID
-router.patch('/:id', auth(), reviewsControllers.updateReview);
+router.patch('/:id', protectRoute, reviewsControllers.updateReview);
 
 // Delete a review by ID
-router.delete('/:id', auth(), reviewsControllers.deleteReview);
+router.delete('/:id', protectRoute, reviewsControllers.deleteReview);
 
 export default router;

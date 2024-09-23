@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import productsControllers from './products.controllers';
-import auth from '../../middlewares/auth';
+import protectRoute from '../../middlewares/auth';
 
 const router = Router();
 
@@ -9,7 +9,6 @@ router.get('/', productsControllers.getProducts); // GET /products?name=...&cate
 
 router.get('/search', productsControllers.searchProducts);
 
-
 router.get('/best-sellers', productsControllers.getBestSellingProducts);
 
 router.get('/top-visited', productsControllers.getTopVisitedProducts);
@@ -17,7 +16,10 @@ router.get('/top-visited', productsControllers.getTopVisitedProducts);
 router.get('/:id/related', productsControllers.getRelatedProducts);
 router.get('/:id', productsControllers.getProductById); // GET /products/:id
 
-router.post('/batch', auth(), productsControllers.addMultipleProducts);
+router.get('/is-bought/:productId', protectRoute, productsControllers.isProductBought);
+
+router.post('/batch', protectRoute, productsControllers.addMultipleProducts);
+
 
 
 

@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import productsServices from './products.services';
 import sendResponse from '../../../shared/response';
 import { IProduct } from './products.type';
+import { AuthenticatedRequest } from '../../middlewares/auth';
 
 class ProductController {
   async getProducts(req: Request, res: Response) {
@@ -210,6 +211,35 @@ class ProductController {
         statusCode: 500,
         success: false,
         message: 'Error adding products',
+        data: null
+      });
+    }
+  }
+
+  // Is this product bought
+  async isProductBought(req: AuthenticatedRequest, res: Response): Promise<void> {
+    try {
+      const userId = req?.user?.userId as string;
+      const productId = req?.params?.productId as string;
+
+      // Await the service result
+      const result = await productsServices.isProductBought(userId, productId);
+
+      // Send a success response
+      sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: 'Product purchase status fetched successfully.',
+        data: result
+      });
+    } catch (error) {
+      console.log('Error fetching product purchase status:', error);
+
+      // Send an error response
+      sendResponse(res, {
+        statusCode: 500,
+        success: false,
+        message: 'Error fetching product purchase status!',
         data: null
       });
     }

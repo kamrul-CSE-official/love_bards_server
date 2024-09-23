@@ -1,6 +1,7 @@
-import { FilterQuery } from 'mongoose';
+import mongoose, { FilterQuery } from 'mongoose';
 import { IProduct } from './products.type';
 import Product from './products.schema';
+import Order from '../orders/orders.schema';
 
 interface ProductFilterOptions {
   name?: string;
@@ -183,6 +184,35 @@ class ProductService {
   async addMultipleProducts(productsData: IProduct[]) {
     const products = await Product.insertMany(productsData);
     return products;
+  }
+
+  // Is user bought this product
+  async isProductBought(userId: string, productId: string): Promise<boolean> {
+    try {
+      // Validate ObjectIds
+      if (!mongoose.Types.ObjectId.isValid(userId) || !mongoose.Types.ObjectId.isValid(productId)) {
+        throw new Error('Invalid user or product ID');
+      }
+
+      // Log the ObjectIds to verify their validity
+      console.log('UserId:', userId, 'ProductId:', productId);
+
+      const findOrder = await Order.findOne({
+        user: new mongoose.Types.ObjectId(userId),
+        products: {
+          $elemMatch: { product: new mongoose.Types.ObjectId(productId) }
+        }
+      }).select('_id');
+
+      // Log the result of the query
+      console.log('findOrder result:', findOrder);
+
+      // Return true if an order is found, otherwise false
+      return !!findOrder;
+    } catch (error) {
+      console.error('Error checking if product was bought:', error);
+      throw new Error('Unable to verify product purchase status');
+    }
   }
 }
 
