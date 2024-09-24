@@ -18,30 +18,22 @@ class ProductService {
   // get products
   async getProducts(filterOptions: ProductFilterOptions) {
     const { name, category, brand, minPrice, maxPrice, sort, page = 1, limit = 12 } = filterOptions;
-
-    // Create a filter object based on the user's filter options
+  
+    // Initialize filters object
     const filters: FilterQuery<IProduct> = {};
-
-    // Filter by name (if provided) using case-insensitive search
+  
+    // Filter by name (case-insensitive search)
     if (name) {
-      filters.name = new RegExp(name, 'i'); // 'i' for case-insensitive
+      filters.name = new RegExp(name, 'i');
     }
 
-    // Filter by category (if provided)
-    if (category) {
-      filters.category = category;
-    }
-
-    // Filter by brand (if provided)
-    if (brand) {
-      filters.brand = brand;
-    }
-
-    // Filter by price range (if provided)
+    // Filter by category, brand, and price range
+    if (category) filters.category = category;
+    if (brand) filters.brand = brand;
     if (minPrice) filters.price = { ...filters.price, $gte: minPrice };
     if (maxPrice) filters.price = { ...filters.price, $lte: maxPrice };
 
-    // Sort options based on user input
+    // Define sort options
     const sortOptions: any = {};
     if (sort) {
       switch (sort) {
@@ -57,18 +49,28 @@ class ProductService {
         case 'popularity':
           sortOptions.visitors = -1;
           break;
+        default:
+          sortOptions.createdAt = -1; // Default sort by newest if none provided
       }
     }
 
-    // Pagination logic
+    // Pagination setup
     const skip = (page - 1) * limit;
 
-    // Fetch products with filters, sorting, and pagination
-    const products = await Product.find(filters).sort(sortOptions).skip(skip).limit(limit);
+    // Fetch filtered, sorted, and paginated products
+    let products = await Product.find(filters).sort(sortOptions).skip(skip).limit(limit);
 
-    // Count total products for pagination
+    // If no products found with the filters, fetch a default set of products (e.g., trending or popular)
+    if (products.length === 0) {
+      products = await Product.find()
+        .sort({ visitors: -1 }) // Default sort by popularity (or you can choose any other field)
+        .skip(skip)
+        .limit(limit);
+    }
+
+    // Count total products based on the filter
     const totalProducts = await Product.countDocuments(filters);
-
+  
     return {
       products,
       totalProducts,
@@ -76,6 +78,7 @@ class ProductService {
       currentPage: page
     };
   }
+  
 
   // search products
   async searchProducts(filterOptions: ProductFilterOptions) {
@@ -195,7 +198,6 @@ class ProductService {
       }
 
       // Log the ObjectIds to verify their validity
-      console.log('UserId:', userId, 'ProductId:', productId);
 
       const findOrder = await Order.findOne({
         user: new mongoose.Types.ObjectId(userId),
@@ -203,9 +205,6 @@ class ProductService {
           $elemMatch: { product: new mongoose.Types.ObjectId(productId) }
         }
       }).select('_id');
-
-      // Log the result of the query
-      console.log('findOrder result:', findOrder);
 
       // Return true if an order is found, otherwise false
       return !!findOrder;

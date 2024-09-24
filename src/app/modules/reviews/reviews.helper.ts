@@ -19,9 +19,7 @@ async function checkUserOrder(userId: string, productId: string): Promise<boolea
   const order = await Order.findOne({
     user: userId,
     'products.product': productId,
-    status: 'delivered' // Only consider orders that are marked as 'delivered'
   });
-
   return !!order; // Return true if the order exists, false otherwise
 }
 

@@ -8,7 +8,6 @@ class ProductController {
   async getProducts(req: Request, res: Response) {
     try {
       const { name, category, brand, minPrice, maxPrice, sort, page, limit } = req?.query;
-
       const filterOptions = {
         name: name as string,
         category: category as string,
@@ -21,7 +20,6 @@ class ProductController {
       };
 
       const productsData = await productsServices.getProducts(filterOptions);
-
       // Use sendResponse for standardized responses
       sendResponse(res, {
         statusCode: 200,
@@ -130,8 +128,6 @@ class ProductController {
   // Get top visited products with pagination
   async getTopVisitedProducts(req: Request, res: Response) {
     try {
-      console.log('Fetching top visited products...');
-
       // Parse query parameters for pagination
       const limit = req.query.limit ? Number(req.query.limit) : 10;
       const page = req.query.page ? Number(req.query.page) : 1;

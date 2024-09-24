@@ -13,6 +13,7 @@ class ReviewController {
 
       // Check if the user has ordered the product
       const hasPurchased = await reviewHelper.checkUserOrder(userId, productId);
+      console.log("Has Purchased: ",hasPurchased)
 
       if (!hasPurchased) {
         return sendResponse(res, {
