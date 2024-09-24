@@ -12,7 +12,7 @@ export const generateAccessToken = (
   name: string,
   email: string
 ): string => {
-  return jwt.sign({ userId, role, name, email }, secretKey, { expiresIn: '5h' });
+  return jwt.sign({ userId, role, name, email }, secretKey, { expiresIn: '20h' });
 };
 
 // Validate Access Token

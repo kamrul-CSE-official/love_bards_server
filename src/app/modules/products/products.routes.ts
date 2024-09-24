@@ -14,6 +14,7 @@ router.get('/best-sellers', productsControllers.getBestSellingProducts);
 router.get('/top-visited', productsControllers.getTopVisitedProducts);
 
 router.get('/:id/related', productsControllers.getRelatedProducts);
+
 router.get('/:id', productsControllers.getProductById); // GET /products/:id
 
 router.get('/is-bought/:productId', protectRoute, productsControllers.isProductBought);
