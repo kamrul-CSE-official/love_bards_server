@@ -1,25 +1,37 @@
 import { Request, Response } from 'express';
+import dotenv from 'dotenv';
+import path from 'path';
 import ordersServices from './orders.services';
 import sendResponse from '../../../shared/response';
+
+dotenv.config({ path: path.join(process.cwd(), '.env') });
 
 class OrderController {
   // Create a new order
   async createOrder(req: Request, res: Response) {
     try {
       const orderData = req.body;
+
+
       const newOrder = await ordersServices.createOrder(orderData);
+
       sendResponse(res, {
         statusCode: 201,
         success: true,
         message: 'Order created successfully',
         data: newOrder
       });
-    } catch (error) {
-        console.log(error)
+    } catch (error: any) {
+      console.error('Error creating order:', error.message); // Log the error message for debugging
+
+      // Optionally, you can send back a more detailed error message for debugging in development
+      const errorMessage =
+        process.env.NODE_ENV === 'development' ? error.message : 'Error creating order';
+
       sendResponse(res, {
         statusCode: 500,
         success: false,
-        message: 'Error creating order',
+        message: errorMessage,
         data: null
       });
     }

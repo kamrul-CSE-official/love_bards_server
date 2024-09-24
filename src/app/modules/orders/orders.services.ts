@@ -23,14 +23,17 @@ class OrderService {
         product.quantity -= item.quantity;
         await product.save();
       }
+
       // Create the order
       const newOrder = new Order(orderData);
       await newOrder.save();
       return newOrder;
-    } catch (error) {
+    } catch (error: any) {
+      console.error('Error in createOrder service:', error.message); // Log the error message for debugging
       throw new Error(`Order creation failed: ${(error as Error).message}`);
     }
   }
+  
 
   // Get orders by user with pagination
   async getOrdersByUser(userId: string, limit: number, page: number) {
